@@ -1,0 +1,49 @@
+# ==========================================
+# 🔒 ARQUIVOS SENSÍVEIS E DE SISTEMA
+# ==========================================
+# Evita subir variáveis de ambiente e credenciais
+.env
+*.env
+
+# Evita arquivos temporários e logs
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Evita arquivos de sistema (Windows/macOS)
+.DS_Store
+Thumbs.db
+
+# ==========================================
+#  DEPENDÊNCIAS
+# ==========================================
+# Ignora todas as pastas de dependências Node.js
+node_modules/
+
+# ==========================================
+#  BACKEND (não enviar ainda)
+# ==========================================
+# Ignora tudo dentro da pasta backend
+/backend/*
+
+# Mantém o próprio .gitignore do backend (caso exista)
+!/backend/.gitignore
+
+# ==========================================
+# 🎨 FRONTEND (mantém visível no Git)
+# ==========================================
+# Garante que o frontend seja versionado normalmente
+!/frontend/
+!/frontend/css/
+!/frontend/js/
+!/frontend/image/
+!/frontend/index.html
+
+# ==========================================
+# BUILD E CACHE
+# ==========================================
+# Ignora pastas de build e cache (caso existam)
+dist/
+build/
+.cache/
