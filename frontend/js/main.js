@@ -1,138 +1,120 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    // MENU MOBILE
     const hamburger = document.getElementById("hamburger");
     const menu = document.getElementById("menu");
 
     if (hamburger && menu) {
-
         hamburger.addEventListener("click", () => {
             menu.classList.toggle("show");
         });
 
-        // Fecha ao clicar em um link
         document.querySelectorAll(".menu a").forEach(link => {
             link.addEventListener("click", () => {
                 menu.classList.remove("show");
             });
         });
-
     }
 
-});
-//Validar formulario
-function validateForm() {
-    let valid = true;
+    // FORM
+    const form = document.getElementById("form-oracao");
+    const btnEnviar = document.getElementById("btnEnviar");
+    const mensagemRetorno = document.getElementById("mensagemRetorno");
 
-    const nome = document.getElementById('nome');
-    const email = document.getElementById('email');
-    const pedido = document.getElementById('pedido');
-    const lgpd = document.getElementById('lgpd');
-    const honeypot = document.getElementById('website');
+    // Timestamp anti-bot
+    document.getElementById("inicio").value = Date.now();
 
-    // honeypot
-    if (honeypot.value) {
-      return false;
+    // Rate limit local
+    const STORAGE_KEY_LAST_REQUEST = "ultimaRequisicao";
+    const RATE_LIMIT_MINUTES = 5;
+
+    function isRateLimited() {
+        const last = localStorage.getItem(STORAGE_KEY_LAST_REQUEST);
+        if (!last) return false;
+        const diffMin = (Date.now() - new Date(last).getTime()) / 1000 / 60;
+        return diffMin < RATE_LIMIT_MINUTES;
     }
 
-    // nome
-    if (!nome.value || nome.value.trim().length < 3) {
-      setError('nome', 'Informe seu nome completo.');
-      valid = false;
-    } else {
-      setError('nome', '');
+    function setRateLimitTimestamp() {
+        localStorage.setItem(STORAGE_KEY_LAST_REQUEST, new Date().toISOString());
     }
 
-    // email (opcional, mas se tiver, valida)
-    if (email.value) {
-      const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!regexEmail.test(email.value)) {
-        setError('email', 'Informe um e-mail válido ou deixe em branco.');
-        valid = false;
-      } else {
-        setError('email', '');
-      }
-    } else {
-      setError('email', '');
+    // Validação simples
+    function validateForm() {
+        const nome = document.getElementById('nome').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const pedido = document.getElementById('pedido').value.trim();
+        const lgpd = document.getElementById('lgpd').checked;
+        const honeypot = document.getElementById('website').value;
+
+        if (honeypot) return false;
+        if (nome.length < 3) return false;
+        if (pedido.length < 10) return false;
+        if (!lgpd) return false;
+
+        if (email) {
+            const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regexEmail.test(email)) return false;
+        }
+
+        return true;
     }
 
-    // pedido
-    if (!pedido.value || pedido.value.trim().length < 10) {
-      setError('pedido', 'Descreva seu pedido de oração com mais detalhes.');
-      valid = false;
-    } else {
-      setError('pedido', '');
-    }
+    // Envio do formulário
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    // LGPD
-    if (!lgpd.checked) {
-      valid = false;
-      mensagemRetorno.textContent = 'Você precisa aceitar o uso dos dados conforme a LGPD.';
-      mensagemRetorno.style.color = '#b00020';
-    } else if (valid) {
-      mensagemRetorno.textContent = '';
-    }
+        if (!validateForm()) {
+            mensagemRetorno.textContent = "Verifique os campos e tente novamente.";
+            mensagemRetorno.style.color = "#b00020";
+            return;
+        }
 
-    return valid;
-  }
+        if (isRateLimited()) {
+            mensagemRetorno.textContent = "Você já enviou um pedido recentemente. Tente novamente em alguns minutos.";
+            mensagemRetorno.style.color = "#b00020";
+            return;
+        }
 
-  function isRateLimited() {
-    const last = localStorage.getItem(STORAGE_KEY_LAST_REQUEST);
-    if (!last) return false;
-    const lastDate = new Date(last);
-    const diffMs = Date.now() - lastDate.getTime();
-    const diffMin = diffMs / 1000 / 60;
-    return diffMin < RATE_LIMIT_MINUTES;
-  }
+        btnEnviar.disabled = true;
+        mensagemRetorno.textContent = "Enviando...";
+        mensagemRetorno.style.color = "";
 
-  function setRateLimitTimestamp() {
-    localStorage.setItem(STORAGE_KEY_LAST_REQUEST, new Date().toISOString());
-  }
+        const payload = {
+            nome: document.getElementById('nome').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            pedido: document.getElementById('pedido').value.trim(),
+            lgpd: document.getElementById('lgpd').checked,
+            website: document.getElementById('website').value,
+            inicio: document.getElementById('inicio').value
+        };
+//CHAMA API
+        try {
+            const resp = await fetch('http://localhost:8080/api/pedido-oracao', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+            const data = await resp.json();
 
-    if (!validateForm()) {
-      return;
-    }
+            if (!resp.ok) {
+                mensagemRetorno.textContent = data.erro || "Erro ao enviar pedido.";
+                mensagemRetorno.style.color = "#b00020";
+                throw new Error();
+            }
 
-    if (isRateLimited()) {
-      mensagemRetorno.textContent =
-        `Você já enviou um pedido recentemente. Tente novamente em alguns minutos.`;
-      mensagemRetorno.style.color = '#b00020';
-      return;
-    }
+            setRateLimitTimestamp();
+            mensagemRetorno.textContent = "Pedido enviado com sucesso. Deus abençoe você!";
+            mensagemRetorno.style.color = "green";
+            form.reset();
 
-    btnEnviar.disabled = true;
-    mensagemRetorno.textContent = 'Enviando seu pedido...';
-    mensagemRetorno.style.color = '';
+        } catch (err) {
+            mensagemRetorno.textContent = "Não foi possível enviar seu pedido agora. Tente novamente mais tarde.";
+            mensagemRetorno.style.color = "#b00020";
+        } finally {
+            btnEnviar.disabled = false;
+        }
+    });
 
-    const payload = {
-      nome: document.getElementById('nome').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      pedido: document.getElementById('pedido').value.trim(),
-    };
-
-    try {
-      // depois vamos apontar isso para o backend real
-      const resp = await fetch('/api/pedido-oracao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!resp.ok) {
-        throw new Error('Erro ao enviar pedido');
-      }
-
-      setRateLimitTimestamp();
-      mensagemRetorno.textContent = 'Pedido enviado com sucesso. Deus abençoe você!';
-      mensagemRetorno.style.color = 'green';
-      form.reset();
-    } catch (err) {
-      mensagemRetorno.textContent =
-        'Não foi possível enviar seu pedido agora. Tente novamente mais tarde.';
-      mensagemRetorno.style.color = '#b00020';
-    } finally {
-      btnEnviar.disabled = false;
-    }
 });

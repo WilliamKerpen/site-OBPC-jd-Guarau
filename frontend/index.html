@@ -55,6 +55,7 @@
             <li><a href="#sobre">Sobre Nós</a></li>
             <li><a href="#cultos">Cultos</a></li>
             <li><a href="#contato">Contato</a></li>
+            <li><a href="#doacao">Doações</a></li>
             <li><a href="#localizacao">Localização</a></li>
         </ul>
     </nav>
@@ -126,41 +127,56 @@
 
 <!--CONTATO-->
 <section id="contato" class="container">
+
     <h2>Pedido de Oração</h2>
 
-    <form>
+    <form id="form-oracao">
 
+        <!-- Segurança -->
+        <input type="hidden" id="inicio" name="inicio" value="">
+        <input type="text" id="website" name="website" style="display:none">
+
+        <!-- Formulário -->
         <input
+            id="nome"
             type="text"
             placeholder="Nome Completo"
             required>
 
         <input
+            id="email"
             type="email"
-            placeholder="Seu E-mail"
-            required>
+            placeholder="Seu E-mail (opcional)">
 
         <textarea
+            id="pedido"
             rows="6"
             placeholder="Digite seu pedido de oração..."
             required></textarea>
 
         <label class="lgpd">
-            <input type="checkbox" required>
+            <input type="checkbox" id="lgpd" required>
             <span class="txt-lgpd">
-            Concordo com o tratamento das minhas informações conforme a LGPD para contato e atendimento do pedido de oração.
+                Concordo com o tratamento das minhas informações conforme a LGPD para contato e atendimento do pedido de oração.
             </span>
         </label>
 
-        <button type="submit">
+        <button id="btnEnviar" type="submit">
             Enviar Pedido
         </button>
 
     </form>
+  
+    
 </section>
 
+  <!--MENSAGEM DE RETORNO-->
+<p id="mensagemRetorno"></p>
+
+
+
 <!--DOACOES-->
-<section class="container doacoes">
+<section id="doacao" class="container doacoes">
     <h2>Contribuições e Ofertas</h2>
 
     <p>
@@ -208,7 +224,19 @@
 
 
 <footer>
-    Desenvolvido por William Kerpen
+        <p>© 2026 OBPC Jardim Guaraú — Todos os direitos reservados.</p>
+
+    <p>R. Conceição de Ipanema, 205 - Jardim das Esmeraldas, São Paulo - SP, 05549-180</p>
+    <p>Cultos: Terça 19:30h | Quinta 19:30h | Domingo 18h</p>
+
+    <p>
+        <a href="politica-privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade (LGPD)</a> |
+        <a href="mailto:contato@obpcguarau.org" target="_blank" rel="noopener noreferrer">contato@obpcguarau.org</a>
+    </p>
+
+    <p class="dev">
+        Desenvolvido por <a href="https://www.linkedin.com/in/williamkerpen/" target="_blank" rel="noopener noreferrer">William Kerpen</a>
+    </p>
 </footer>
 
 </body>

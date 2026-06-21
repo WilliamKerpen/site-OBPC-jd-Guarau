@@ -248,6 +248,11 @@ form button:hover{
     line-height: 1.4;
 }
 
+/*mENSAGEM DE RETORNO*/
+#mensagemRetorno{
+    text-align: center;
+}
+
 /*DOACOES*/
 .doacoes{
     text-align:center;
@@ -268,6 +273,17 @@ footer{
     text-align:center;
     padding:20px;
 }
+
+footer a{
+    text-decoration: none;
+     font-weight: bold;
+     color: #fff;
+}
+
+footer a:hover{
+    color: #b38d97;
+}
+
 
 
 
@@ -369,13 +385,13 @@ footer{
 
     /* Menu aberto */
     .menu.show {
-        max-height: 300px;
+        max-height: 320px;
         padding: 20px 0;
     }
 
     /* Links do menu */
     .menu li {
-        padding: 12px 0;
+        padding: 5px 0;
     }
 
     .menu a {
