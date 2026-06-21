@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 //CHAMA API
         try {
-            const resp = await fetch('http://localhost:8080/api/pedido-oracao', {
+            const resp = await fetch('https://site-obpc-jd-guarau.onrender.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
