@@ -3,6 +3,7 @@
 # ==========================================
 # Evita subir variáveis de ambiente e credenciais
 .env
+backend/.env
 *.env
 
 # Evita arquivos temporários e logs
@@ -25,7 +26,6 @@ node_modules/
 #  BACKEND (não enviar ainda)
 # ==========================================
 # Ignora tudo dentro da pasta backend
-/backend/*
 
 # Mantém o próprio .gitignore do backend (caso exista)
 !/backend/.gitignore
