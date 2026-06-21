@@ -17,6 +17,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.set("trust proxy", 1);
 app.use("/api/pedido-oracao", limiter, oracaoRoute);
 
 const PORT = process.env.PORT || 8080;
